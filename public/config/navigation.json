@@ -1,0 +1,47 @@
+{
+    "navigation": [
+        {
+            "id": "work",
+            "label": "Work",
+            "type": "menu",
+            "children": []
+        },
+        {
+            "id": "resources",
+            "label": "Resources",
+            "type": "menu",
+            "children": [
+                {
+                    "id": "resource-1",
+                    "label": "1",
+                    "type": "link",
+                    "url": "#"
+                },
+                {
+                    "id": "resource-2",
+                    "label": "2",
+                    "type": "link",
+                    "url": "#"
+                },
+                {
+                    "id": "resource-3",
+                    "label": "3",
+                    "type": "link",
+                    "url": "#"
+                }
+            ]
+        },
+        {
+            "id": "contact",
+            "label": "Contact",
+            "type": "page",
+            "content": "/content/contact.md"
+        },
+        {
+            "id": "about",
+            "label": "About",
+            "type": "page",
+            "content": "/content/about.md"
+        }
+    ]
+}

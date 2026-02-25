@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Image Scale & Measure Tool</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background: #f4f4f4;
+}
+.toolbar {
+    padding: 10px;
+    background: white;
+    border-bottom: 1px solid #ddd;
+}
+button {
+    margin-right: 10px;
+}
+canvas {
+    background: #222;
+    display: block;
+}
+#output {
+    margin-left: 15px;
+    font-weight: bold;
+}
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+<input type="file" id="upload">
+<button id="setScale">Set Scale</button>
+<button id="measure">Measure</button>
+<span id="output"></span>
+</div>
+
+<canvas id="canvas"></canvas>
+
+<script>
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+const upload = document.getElementById("upload");
+const output = document.getElementById("output");
+
+let img = new Image();
+let scaleFactor = null;
+let mode = null;
+let points = [];
+let zoom = 1;
+let offsetX = 0;
+let offsetY = 0;
+let isDragging = false;
+let dragStart = {x:0, y:0};
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight - 50;
+
+function draw() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.save();
+    ctx.translate(offsetX, offsetY);
+    ctx.scale(zoom, zoom);
+    ctx.drawImage(img,0,0);
+
+    ctx.fillStyle = "red";
+    points.forEach(p=>{
+        ctx.beginPath();
+        ctx.arc(p.x,p.y,5/zoom,0,Math.PI*2);
+        ctx.fill();
+    });
+
+    if(points.length === 2){
+        ctx.strokeStyle="yellow";
+        ctx.lineWidth=2/zoom;
+        ctx.beginPath();
+        ctx.moveTo(points[0].x,points[0].y);
+        ctx.lineTo(points[1].x,points[1].y);
+        ctx.stroke();
+    }
+
+    ctx.restore();
+}
+
+upload.onchange = e=>{
+    const reader = new FileReader();
+    reader.onload = evt=>{
+        img.onload = draw;
+        img.src = evt.target.result;
+    }
+    reader.readAsDataURL(e.target.files[0]);
+}
+
+canvas.addEventListener("mousedown", e=>{
+    if(mode === "scale" || mode === "measure"){
+        const rect = canvas.getBoundingClientRect();
+        const x = (e.clientX - rect.left - offsetX)/zoom;
+        const y = (e.clientY - rect.top - offsetY)/zoom;
+        points.push({x,y});
+        if(points.length === 2){
+            if(mode === "scale"){
+                const dx = points[1].x - points[0].x;
+                const dy = points[1].y - points[0].y;
+                const pixelDist = Math.sqrt(dx*dx + dy*dy);
+                const realDist = parseFloat(prompt("Enter real distance in metres:"));
+                scaleFactor = realDist / pixelDist;
+                output.textContent = "Scale set.";
+                mode = null;
+                points = [];
+            } else if(mode === "measure"){
+                if(scaleFactor === null){
+                    alert("Set scale first");
+                    points=[];
+                    return;
+                }
+                const dx = points[1].x - points[0].x;
+                const dy = points[1].y - points[0].y;
+                const pixelDist = Math.sqrt(dx*dx + dy*dy);
+                const realDist = pixelDist * scaleFactor;
+                output.textContent = realDist.toFixed(2) + " metres";
+                points=[];
+                mode=null;
+            }
+        }
+        draw();
+    } else {
+        isDragging = true;
+        dragStart.x = e.clientX - offsetX;
+        dragStart.y = e.clientY - offsetY;
+    }
+});
+
+canvas.addEventListener("mousemove", e=>{
+    if(isDragging){
+        offsetX = e.clientX - dragStart.x;
+        offsetY = e.clientY - dragStart.y;
+        draw();
+    }
+});
+
+canvas.addEventListener("mouseup", ()=>{
+    isDragging=false;
+});
+
+canvas.addEventListener("wheel", e=>{
+    e.preventDefault();
+    const scaleAmount = -e.deltaY * 0.001;
+    zoom += scaleAmount;
+    zoom = Math.min(Math.max(zoom, 0.1), 10);
+    draw();
+});
+
+document.getElementById("setScale").onclick = ()=>{
+    mode = "scale";
+    points = [];
+    output.textContent = "Click two known points.";
+};
+
+document.getElementById("measure").onclick = ()=>{
+    mode = "measure";
+    points = [];
+    output.textContent = "Click two points to measure.";
+};
+</script>
+
+</body>
+</html>
