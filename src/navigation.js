@@ -20,7 +20,7 @@ const mobileToggle = document.getElementById('mobile-menu-toggle');
  */
 export async function initNavigation() {
     try {
-        const res = await fetch('/config/navigation.json');
+        const res = await fetch(`${import.meta.env.BASE_URL}config/navigation.json`);
         navData = await res.json();
         renderHeaderNav(navData.navigation);
         bindGlobalEvents();

@@ -11,7 +11,8 @@ import fm from 'front-matter';
  * Returns an HTML string.
  */
 export async function renderContent(contentPath) {
-    const res = await fetch(contentPath);
+    const resolvedPath = contentPath.startsWith('/') ? contentPath.slice(1) : contentPath;
+    const res = await fetch(`${import.meta.env.BASE_URL}${resolvedPath}`);
     if (!res.ok) throw new Error(`Failed to fetch ${contentPath}: ${res.status}`);
 
     const raw = await res.text();
