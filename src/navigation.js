@@ -19,13 +19,26 @@ const mobileToggle = document.getElementById('mobile-menu-toggle');
  * Load navigation config and render header items
  */
 export async function initNavigation() {
+    const configPath = 'config/navigation.json';
+    console.log(`[Navigation] Fetching config from: ${configPath} (Relative to ${window.location.href})`);
+
     try {
-        const res = await fetch(`${import.meta.env.BASE_URL}config/navigation.json`);
+        // Using a completely relative path ('config/...') instead of prepending BASE_URL.
+        // On GitHub Pages (https://user.github.io/repo/), index.html is at /repo/.
+        // Fetching 'config/navigation.json' from /repo/ will resolve to /repo/config/navigation.json.
+        const res = await fetch(configPath);
+
+        if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status} at ${res.url}`);
+        }
+
         navData = await res.json();
+        console.log('[Navigation] Config loaded successfully:', navData);
         renderHeaderNav(navData.navigation);
         bindGlobalEvents();
     } catch (err) {
-        console.error('Failed to load navigation config:', err);
+        console.error('[Navigation] Failed to load navigation config:', err);
+        // Fallback or retry logic could go here if needed.
     }
 }
 
