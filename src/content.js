@@ -48,6 +48,7 @@ export async function renderContent(contentPath) {
                 const viewerId = `viewer-${Math.random().toString(36).substr(2, 9)}`;
                 html += `
                     <div class="viewer-container" id="${viewerId}" data-url="${escapeHtml(model.url)}">
+                        <div class="viewer-overlay"></div>
                         <div class="viewer-label">${escapeHtml(model.label || '3D Model')}</div>
                     </div>`;
 

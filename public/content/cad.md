@@ -1,5 +1,5 @@
 ---
-title: CAD Projects
+title: Nadar CAD
 models:
   - url: /assets/cad/3 way connector.step
     label: 3 way connector
@@ -7,4 +7,4 @@ models:
     label: object_4.ply
 ---
 
-Explore interactive 3D models and detailed CAD drawings of my recent engineering projects.
+Here are some of the recent CAD models I've made for Nadar.
