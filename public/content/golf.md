@@ -1,21 +1,25 @@
 ---
 title: Infinet Golf
 models:
-  - url: /assets/golf/cad/model1.stl
-    label: Golf Project CAD
+  - url: "/assets/golf/cad/3-Way 20º Connector.stl"
+    label: 3-Way 20º Connector
+  - url: "/assets/golf/cad/Infinet v2, a bit scuffed, first time using Fusion.stl"
+    label: Infinet v2 (Fusion)
 gallery:
-  - url: /assets/golf/1stmarchdrawing.jpg
-    label: 1stmarchdrawing
-  - url: /assets/golf/5f48b1c3-3975-4056-b378-23026c3b6449.png
-    label: 5f48b1c3-3975-4056-b378-23026c3b6449
-  - url: /assets/golf/Fairview (1).jpg
-    label: Fairview (1)
-  - url: /assets/golf/Fairview.jpg
-    label: Fairview
+  - url: /assets/golf/first sketch.jpg
+    label: First Sketch
+  - url: /assets/golf/recent sketches 1.jpg
+    label: Recent Sketches 1
+  - url: /assets/golf/recent sketches 2.jpg
+    label: Recent Sketches 2
+  - url: /assets/golf/v1 bigger.jpg
+    label: V1 Bigger
+  - url: /assets/golf/v2 first build.jpg
+    label: V2 First Build
 ---
 
 ### CAD & Engineering
-Drop your CAD models into `public/assets/golf/cad/` to see them appear here!
+Check out the latest 3D iterations for the project.
 
 ### Image Gallery
-A collection of highlights and projects related to Infinet Golf.
+Visual journey of the Infinet Golf development.
