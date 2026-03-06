@@ -79,20 +79,45 @@ export async function renderContent(contentPath) {
             // Bind zoom events
             setTimeout(() => {
                 const zoomModal = document.getElementById('zoom-modal');
-                const zoomImg = zoomModal.querySelector('img');
+                const zoomImg = zoomModal?.querySelector('img');
+                const modelModal = document.getElementById('model-modal');
+                const modelContainer = document.getElementById('model-viewer-container');
+                const modelClose = modelModal?.querySelector('.modal-close');
 
                 document.querySelectorAll('.gallery-item').forEach(item => {
                     item.addEventListener('click', () => {
                         const url = item.dataset.url;
-                        zoomImg.src = url;
-                        zoomModal.classList.remove('hidden');
-                        zoomModal.setAttribute('aria-hidden', 'false');
+                        if (zoomImg) zoomImg.src = url;
+                        zoomModal?.classList.remove('hidden');
+                        zoomModal?.setAttribute('aria-hidden', 'false');
                     });
                 });
 
-                zoomModal.addEventListener('click', () => {
-                    zoomModal.classList.add('hidden');
-                    zoomModal.setAttribute('aria-hidden', 'true');
+                document.querySelectorAll('.viewer-container').forEach(container => {
+                    container.addEventListener('click', () => {
+                        const url = container.dataset.url;
+                        modelModal?.classList.remove('hidden');
+                        modelModal?.setAttribute('aria-hidden', 'false');
+                        if (modelContainer) modelContainer.innerHTML = '';
+
+                        import('./viewer.js').then(({ initViewer }) => {
+                            if (modelContainer) initViewer(modelContainer, url, true);
+                        });
+                    });
+                });
+
+                const closeModals = () => {
+                    zoomModal?.classList.add('hidden');
+                    zoomModal?.setAttribute('aria-hidden', 'true');
+                    modelModal?.classList.add('hidden');
+                    modelModal?.setAttribute('aria-hidden', 'true');
+                    if (modelContainer) modelContainer.innerHTML = '';
+                };
+
+                zoomModal?.addEventListener('click', closeModals);
+                modelClose?.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    closeModals();
                 });
             }, 100);
         }

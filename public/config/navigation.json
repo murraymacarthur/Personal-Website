@@ -6,6 +6,11 @@
             "type": "menu",
             "children": [
                 {
+                    "id": "h1",
+                    "label": "Currently",
+                    "type": "header"
+                },
+                {
                     "id": "nadar",
                     "label": "Nadar 🌿",
                     "type": "menu",
@@ -37,6 +42,15 @@
                     "content": "/content/golf.md"
                 },
                 {
+                    "id": "d1",
+                    "type": "divider"
+                },
+                {
+                    "id": "h2",
+                    "label": "Previously",
+                    "type": "header"
+                },
+                {
                     "id": "student-deals-club",
                     "label": "Student Deals Club 💀",
                     "type": "link",
@@ -55,6 +69,16 @@
             "label": "Resources",
             "type": "menu",
             "children": [
+                {
+                    "id": "youtube",
+                    "label": "YouTube",
+                    "type": "link",
+                    "url": "https://www.youtube.com/@murraymacarthur"
+                },
+                {
+                    "id": "rd1",
+                    "type": "divider"
+                },
                 {
                     "id": "resource-1",
                     "label": "1",

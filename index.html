@@ -16,6 +16,7 @@
     href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
     rel="stylesheet" />
 
+  <link rel="icon" type="image/png" href="/favicon.png" />
   <link rel="stylesheet" href="/src/style.css" />
 </head>
 
@@ -63,6 +64,18 @@
   <!-- Image Zoom Modal -->
   <div id="zoom-modal" class="hidden" aria-hidden="true">
     <img src="" alt="Zoomed image" />
+  </div>
+
+  <!-- 3D Model Modal -->
+  <div id="model-modal" class="hidden" aria-hidden="true">
+    <div class="modal-panel">
+      <button class="modal-close overlay-btn" aria-label="Close viewer">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M15 5L5 15M5 5L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+        </svg>
+      </button>
+      <div id="model-viewer-container"></div>
+    </div>
   </div>
 </body>
 

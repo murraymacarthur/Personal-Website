@@ -485,7 +485,7 @@ a:hover {
    Gallery Grid
    ============================================ */
 .gallery-container {
-  width: 60%;
+  width: 100%;
   margin: var(--space-xl) auto;
 }
 
@@ -531,6 +531,7 @@ a:hover {
   border: 1px solid var(--glass-border);
   position: relative;
   overflow: hidden;
+  cursor: zoom-in;
 }
 
 .viewer-label {
@@ -545,9 +546,10 @@ a:hover {
 }
 
 /* ============================================
-   Image Zoom Modal
+   Image & Model Zoom Modals
    ============================================ */
-#zoom-modal {
+#zoom-modal,
+#model-modal {
   position: fixed;
   inset: 0;
   z-index: 1000;
@@ -555,26 +557,57 @@ a:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
   transition: opacity var(--duration-normal) var(--ease-out);
-}
-
-#zoom-modal.hidden {
   opacity: 0;
   pointer-events: none;
 }
 
-#zoom-modal img {
-  max-width: 60vw;
-  max-height: 60vh;
-  object-fit: contain;
-  border-radius: 12px;
-  transform: scale(0.95);
-  transition: transform var(--duration-normal) var(--ease-out);
+#zoom-modal:not(.hidden),
+#model-modal:not(.hidden) {
+  opacity: 1;
+  pointer-events: auto;
 }
 
-#zoom-modal:not(.hidden) img {
-  transform: scale(1);
+#model-modal .modal-panel {
+  width: 80vw;
+  height: 80vh;
+  background: rgba(15, 15, 30, 0.95);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+#model-modal .modal-close {
+  position: absolute;
+  top: var(--space-md);
+  right: var(--space-md);
+  z-index: 10;
+}
+
+#model-viewer-container {
+  width: 100%;
+  height: 100%;
+}
+
+/* ============================================
+   Navigation Enhancements
+   ============================================ */
+.menu-header {
+  padding: var(--space-lg) var(--space-lg) var(--space-xs);
+  font-size: var(--font-size-xs);
+  color: var(--color-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-weight: 700;
+  opacity: 0.8;
+}
+
+.menu-divider {
+  height: 1px;
+  background: var(--glass-border);
+  margin: var(--space-sm) var(--space-lg);
+  display: block;
 }
 
 /* ============================================

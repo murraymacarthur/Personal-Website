@@ -7,8 +7,8 @@ import initOpenCascade from 'occt-import-js';
 /**
  * Initialize a 3D viewer in the given container for the provided model URL.
  */
-export async function initViewer(container, modelUrl) {
-    console.log(`[3D Viewer] Initializing for: ${modelUrl}`);
+export async function initViewer(container, modelUrl, isModal = false) {
+    console.log(`[3D Viewer] Initializing for: ${modelUrl} (Modal: ${isModal})`);
 
     // Scene setup
     const scene = new THREE.Scene();
@@ -34,8 +34,19 @@ export async function initViewer(container, modelUrl) {
     // Controls
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
-    controls.autoRotate = true;
+    controls.autoRotate = !isModal; // Only auto-rotate if not in modal
     controls.autoRotateSpeed = 1.0;
+
+    // Click to change color (Modal only)
+    if (isModal) {
+        renderer.domElement.addEventListener('click', () => {
+            scene.traverse((child) => {
+                if (child.isMesh) {
+                    child.material.color.setHex(Math.random() * 0xffffff);
+                }
+            });
+        });
+    }
 
     // Loader
     const ext = modelUrl.split('.').pop().toLowerCase();

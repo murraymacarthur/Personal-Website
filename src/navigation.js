@@ -87,7 +87,17 @@ function showMenu(item) {
 
     if (item.children && item.children.length > 0) {
         item.children.forEach((child) => {
-            const arrow = child.type === 'menu'
+            if (child.type === 'header') {
+                html += `<div class="menu-header">${child.label}</div>`;
+                return;
+            }
+            if (child.type === 'divider') {
+                html += `<div class="menu-divider"></div>`;
+                return;
+            }
+
+            // Arrow for everything except headers/dividers
+            const arrow = child.type === 'menu' || child.type === 'page'
                 ? '<svg class="arrow" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'
                 : child.type === 'link'
                     ? '<svg class="arrow" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M5 11L11 5M11 5H6M11 5V10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'
