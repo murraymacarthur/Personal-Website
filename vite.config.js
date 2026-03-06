@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  base: '/Personal-Website/',
+  base: process.env.VERCEL ? '/' : '/Personal-Website/',
   root: '.',
   publicDir: 'public',
   build: {
