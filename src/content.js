@@ -142,6 +142,63 @@ export async function renderContent(contentPath) {
             html += '</div>';
         }
 
+        // Global Bindings (Run once to set up modal behavior)
+        if (!window.__modalsBound) {
+            const zoomModal = document.getElementById('zoom-modal');
+            const modelModal = document.getElementById('model-modal');
+            const modelContainer = document.getElementById('model-viewer-container');
+
+            const closeAll = () => {
+                zoomModal?.classList.add('hidden');
+                zoomModal?.setAttribute('aria-hidden', 'true');
+                modelModal?.classList.add('hidden');
+                modelModal?.setAttribute('aria-hidden', 'true');
+                if (modelContainer) modelContainer.innerHTML = '';
+            };
+
+            zoomModal?.addEventListener('click', closeAll);
+            modelModal?.querySelector('.modal-close')?.addEventListener('click', (e) => {
+                e.stopPropagation();
+                closeAll();
+            });
+            modelModal?.addEventListener('click', (e) => {
+                if (e.target === modelModal) closeAll();
+            });
+
+            window.__modalsBound = true;
+        }
+
+        // Content-specific events (use a small delay to ensure it's in the DOM)
+        setTimeout(() => {
+            const zoomModal = document.getElementById('zoom-modal');
+            const zoomImg = zoomModal?.querySelector('img');
+            const modelModal = document.getElementById('model-modal');
+            const modelContainer = document.getElementById('model-viewer-container');
+
+            // Bind click to everything with viewer-container or gallery-item
+            document.querySelectorAll('.gallery-item').forEach(item => {
+                item.onclick = () => {
+                    if (zoomImg) zoomImg.src = item.dataset.url;
+                    zoomModal?.classList.remove('hidden');
+                    zoomModal?.setAttribute('aria-hidden', 'false');
+                };
+            });
+
+            document.querySelectorAll('.viewer-container').forEach(container => {
+                container.onclick = (e) => {
+                    const url = container.dataset.url;
+                    modelModal?.classList.remove('hidden');
+                    modelModal?.setAttribute('aria-hidden', 'false');
+                    if (modelContainer) {
+                        modelContainer.innerHTML = '';
+                        import('./viewer.js').then(({ initViewer }) => {
+                            initViewer(modelContainer, url, true);
+                        });
+                    }
+                };
+            });
+        }, 300); // 300ms is safer for innerHTML injection gaps
+
         return html;
     } catch (err) {
         console.error('[Content] Failed to load content:', err);

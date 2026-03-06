@@ -23,9 +23,9 @@
                         },
                         {
                             "id": "oak-estimator",
-                            "label": "Oak Frame Extension Price Estimator",
+                            "label": "Oak Frame Project Estimator",
                             "type": "link",
-                            "url": "#"
+                            "url": "https://oak-frame-project-estimator.vercel.app/"
                         },
                         {
                             "id": "property-transformer",
@@ -52,7 +52,7 @@
                 },
                 {
                     "id": "student-deals-club",
-                    "label": "Student Deals Club 💀",
+                    "label": "Student Deals Club",
                     "type": "link",
                     "url": "https://www.instagram.com/studentdealsclub"
                 },

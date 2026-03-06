@@ -1,5 +1,8 @@
 ---
 title: Infinet Golf
+models:
+  - url: /assets/golf/cad/model1.stl
+    label: Golf Project CAD
 gallery:
   - url: /assets/golf/1stmarchdrawing.jpg
     label: 1stmarchdrawing
@@ -11,4 +14,8 @@ gallery:
     label: Fairview
 ---
 
+### CAD & Engineering
+Drop your CAD models into `public/assets/golf/cad/` to see them appear here!
+
+### Image Gallery
 A collection of highlights and projects related to Infinet Golf.
