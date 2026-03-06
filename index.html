@@ -1,61 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Murray MacArthur</title>
-    <meta name="description" content="Murray MacArthur — Personal Website" />
-    <meta property="og:title" content="Murray MacArthur" />
-    <meta property="og:description" content="Murray MacArthur — Personal Website" />
-    <meta property="og:type" content="website" />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Murray MacArthur</title>
+  <meta name="description" content="Murray MacArthur — Personal Website" />
+  <meta property="og:title" content="Murray MacArthur" />
+  <meta property="og:description" content="Murray MacArthur — Personal Website" />
+  <meta property="og:type" content="website" />
 
-    <link rel="stylesheet" href="/src/style.css" />
-  </head>
-  <body>
-    <!-- Three.js WebGL canvas container -->
-    <div id="bg-canvas"></div>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+    rel="stylesheet" />
 
-    <!-- Header -->
-    <header id="site-header">
-      <a href="/" class="header-name" aria-label="Home">Murray MacArthur</a>
-      <nav id="header-nav" aria-label="Main navigation"></nav>
-    </header>
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
 
-    <!-- Overlay container for menus and content pages -->
-    <div id="overlay" class="overlay hidden" aria-hidden="true">
-      <div class="overlay-backdrop"></div>
-      <div class="overlay-panel">
-        <div class="overlay-header">
-          <button id="overlay-back" class="overlay-btn" aria-label="Go back">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <path d="M13 16L7 10L13 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </button>
-          <span id="overlay-breadcrumb" class="breadcrumb"></span>
-          <button id="overlay-close" class="overlay-btn" aria-label="Close menu">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <path d="M15 5L5 15M5 5L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-          </button>
-        </div>
-        <div id="overlay-content" class="overlay-content"></div>
+<body>
+  <!-- Three.js WebGL canvas container -->
+  <div id="bg-canvas"></div>
+
+  <!-- Header -->
+  <header id="site-header">
+    <a href="/" class="header-name" aria-label="Home">Murray MacArthur</a>
+    <nav id="header-nav" aria-label="Main navigation"></nav>
+  </header>
+
+  <!-- Overlay container for menus and content pages -->
+  <div id="overlay" class="overlay hidden" aria-hidden="true">
+    <div class="overlay-backdrop"></div>
+    <div class="overlay-panel">
+      <div class="overlay-header">
+        <button id="overlay-back" class="overlay-btn" aria-label="Go back">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M13 16L7 10L13 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" />
+          </svg>
+        </button>
+        <span id="overlay-breadcrumb" class="breadcrumb"></span>
+        <button id="overlay-close" class="overlay-btn" aria-label="Close menu">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M15 5L5 15M5 5L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          </svg>
+        </button>
       </div>
+      <div id="overlay-content" class="overlay-content"></div>
     </div>
+  </div>
 
-    <!-- Mobile hamburger toggle -->
-    <button id="mobile-menu-toggle" class="mobile-menu-toggle" aria-label="Open menu" aria-expanded="false">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
+  <!-- Mobile hamburger toggle -->
+  <button id="mobile-menu-toggle" class="mobile-menu-toggle" aria-label="Open menu" aria-expanded="false">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
 
-    <script type="module" src="/src/main.js"></script>
-  </body>
+  <script type="module" src="/src/main.js"></script>
+
+  <!-- Image Zoom Modal -->
+  <div id="zoom-modal" class="hidden" aria-hidden="true">
+    <img src="" alt="Zoomed image" />
+  </div>
+</body>
+
 </html>

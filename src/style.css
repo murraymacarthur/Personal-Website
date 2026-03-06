@@ -482,6 +482,102 @@ a:hover {
 }
 
 /* ============================================
+   Gallery Grid
+   ============================================ */
+.gallery-container {
+  width: 60%;
+  margin: var(--space-xl) auto;
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-md);
+  width: 100%;
+}
+
+.gallery-item {
+  aspect-ratio: 4 / 3;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 1px solid var(--glass-border);
+  transition: transform var(--duration-fast) var(--ease-out), border-color var(--duration-fast) var(--ease-out);
+}
+
+.gallery-item:hover {
+  transform: translateY(-2px);
+  border-color: var(--color-accent);
+}
+
+.gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  margin: 0;
+  /* Override default img margin */
+}
+
+/* ============================================
+   3D Viewer
+   ============================================ */
+.viewer-container {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 12px;
+  margin: var(--space-xl) 0;
+  border: 1px solid var(--glass-border);
+  position: relative;
+  overflow: hidden;
+}
+
+.viewer-label {
+  position: absolute;
+  top: var(--space-md);
+  left: var(--space-md);
+  background: rgba(15, 15, 30, 0.8);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: 4px;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+/* ============================================
+   Image Zoom Modal
+   ============================================ */
+#zoom-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(6, 6, 15, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: opacity var(--duration-normal) var(--ease-out);
+}
+
+#zoom-modal.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+#zoom-modal img {
+  max-width: 60vw;
+  max-height: 60vh;
+  object-fit: contain;
+  border-radius: 12px;
+  transform: scale(0.95);
+  transition: transform var(--duration-normal) var(--ease-out);
+}
+
+#zoom-modal:not(.hidden) img {
+  transform: scale(1);
+}
+
+/* ============================================
    Scrollbar
    ============================================ */
 .overlay-content::-webkit-scrollbar {

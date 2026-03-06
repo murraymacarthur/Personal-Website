@@ -41,6 +41,62 @@ export async function renderContent(contentPath) {
         // Markdown body
         html += marked.parse(body);
 
+        // 3D Models
+        if (attributes.models && Array.isArray(attributes.models)) {
+            html += '<div class="models-container">';
+            for (const model of attributes.models) {
+                const viewerId = `viewer-${Math.random().toString(36).substr(2, 9)}`;
+                html += `
+                    <div class="viewer-container" id="${viewerId}" data-url="${escapeHtml(model.url)}">
+                        <div class="viewer-label">${escapeHtml(model.label || '3D Model')}</div>
+                    </div>`;
+
+                // We'll initialize these after the HTML is added to DOM
+                setTimeout(async () => {
+                    try {
+                        const { initViewer } = await import('./viewer.js');
+                        const container = document.getElementById(viewerId);
+                        if (container) initViewer(container, model.url);
+                    } catch (err) {
+                        console.error('[Content] Failed to init 3D viewer:', err);
+                    }
+                }, 100);
+            }
+            html += '</div>';
+        }
+
+        // Image Gallery
+        if (attributes.gallery && Array.isArray(attributes.gallery)) {
+            html += '<div class="gallery-container"><div class="gallery-grid">';
+            for (const item of attributes.gallery) {
+                html += `
+                    <div class="gallery-item" data-url="${escapeHtml(item.url)}">
+                        <img src="${escapeHtml(item.url)}" alt="${escapeHtml(item.label || '')}" loading="lazy" />
+                    </div>`;
+            }
+            html += '</div></div>';
+
+            // Bind zoom events
+            setTimeout(() => {
+                const zoomModal = document.getElementById('zoom-modal');
+                const zoomImg = zoomModal.querySelector('img');
+
+                document.querySelectorAll('.gallery-item').forEach(item => {
+                    item.addEventListener('click', () => {
+                        const url = item.dataset.url;
+                        zoomImg.src = url;
+                        zoomModal.classList.remove('hidden');
+                        zoomModal.setAttribute('aria-hidden', 'false');
+                    });
+                });
+
+                zoomModal.addEventListener('click', () => {
+                    zoomModal.classList.add('hidden');
+                    zoomModal.setAttribute('aria-hidden', 'true');
+                });
+            }, 100);
+        }
+
         // Download / action buttons
         if (attributes.downloads && Array.isArray(attributes.downloads)) {
             html += '<div class="download-links">';
