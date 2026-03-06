@@ -1,53 +1,91 @@
 {
     "navigation": [
         {
-            "id": "nadar",
-            "label": "Nadar 🌿",
+            "id": "work",
+            "label": "Work",
             "type": "menu",
             "children": [
                 {
-                    "id": "cad",
-                    "label": "CAD",
+                    "id": "nadar",
+                    "label": "Nadar 🌿",
+                    "type": "menu",
+                    "children": [
+                        {
+                            "id": "cad",
+                            "label": "CAD",
+                            "type": "page",
+                            "content": "/content/cad.md"
+                        },
+                        {
+                            "id": "oak-estimator",
+                            "label": "Oak Frame Extension Price Estimator",
+                            "type": "link",
+                            "url": "#"
+                        },
+                        {
+                            "id": "property-transformer",
+                            "label": "Property view transformer",
+                            "type": "link",
+                            "url": "https://property-view-transformer.vercel.app/"
+                        }
+                    ]
+                },
+                {
+                    "id": "infinet",
+                    "label": "Infinet 🏌️",
                     "type": "page",
-                    "content": "/content/cad.md"
+                    "content": "/content/golf.md"
                 },
                 {
-                    "id": "oak-estimator",
-                    "label": "Oak Frame Extension Price Estimator",
+                    "id": "student-deals-club",
+                    "label": "Student Deals Club 💀",
                     "type": "link",
-                    "url": "#"
+                    "url": "https://www.instagram.com/studentdealsclub"
                 },
                 {
-                    "id": "property-transformer",
-                    "label": "Property view transformer",
+                    "id": "jlr-article",
+                    "label": "Jaguar Land Rover Electronic Motor Engineer",
                     "type": "link",
-                    "url": "https://property-view-transformer.vercel.app/"
+                    "url": "https://www.telegraph.co.uk/business/2026/01/25/jlr-revives-petrol-engine-after-disastrous-woke-rebrand/"
                 }
             ]
         },
         {
-            "id": "infinet",
-            "label": "Infinet 🏌️",
-            "type": "page",
-            "content": "/content/golf.md"
-        },
-        {
-            "id": "student-deals-club",
-            "label": "Student Deals Club 💀",
-            "type": "link",
-            "url": "https://www.instagram.com/studentdealsclub"
-        },
-        {
-            "id": "jlr-article",
-            "label": "Jaguar Land Rover Electronic Motor Engineer",
-            "type": "link",
-            "url": "https://www.telegraph.co.uk/business/2026/01/25/jlr-revives-petrol-engine-after-disastrous-woke-rebrand/"
+            "id": "resources",
+            "label": "Resources",
+            "type": "menu",
+            "children": [
+                {
+                    "id": "resource-1",
+                    "label": "1",
+                    "type": "link",
+                    "url": "#"
+                },
+                {
+                    "id": "resource-2",
+                    "label": "2",
+                    "type": "link",
+                    "url": "#"
+                },
+                {
+                    "id": "resource-3",
+                    "label": "3",
+                    "type": "link",
+                    "url": "#"
+                }
+            ]
         },
         {
             "id": "contact",
             "label": "Contact",
             "type": "page",
             "content": "/content/contact.md"
+        },
+        {
+            "id": "about",
+            "label": "About",
+            "type": "page",
+            "content": "/content/about.md"
         }
     ]
 }
