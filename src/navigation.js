@@ -102,6 +102,10 @@ async function showMenu(item) {
                 html += `<div class="menu-header">${child.label}</div>`;
                 return;
             }
+            if (child.type === 'title') {
+                html += `<div class="menu-title">${child.label}</div>`;
+                return;
+            }
             if (child.type === 'divider') {
                 html += `<div class="menu-divider"></div>`;
                 return;

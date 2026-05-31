@@ -32,7 +32,7 @@
             "children": [
                 {
                     "id": "youtube",
-                    "label": "YouTube",
+                    "label": "YouTube - Murray Designs",
                     "type": "link",
                     "url": "https://www.youtube.com/@murraymacarthur"
                 },
@@ -50,6 +50,12 @@
                     "label": "Measuring Tool",
                     "type": "link",
                     "url": "./measurementtool.html"
+                },
+                {
+                    "id": "scale-calculator",
+                    "label": "Scale Calculator",
+                    "type": "link",
+                    "url": "./scale-calculator.html"
                 },
                 {
                     "id": "resource-2",
@@ -80,7 +86,7 @@
                 {
                     "id": "h-work",
                     "label": "Work",
-                    "type": "header"
+                    "type": "title"
                 },
                 {
                     "id": "ad-divider",
@@ -99,7 +105,7 @@
                 },
                 {
                     "id": "infinet",
-                    "label": "Developing the Infinet 🏌️",
+                    "label": "Infinet 🏌️",
                     "type": "page",
                     "content": "/content/golf.md"
                 },
