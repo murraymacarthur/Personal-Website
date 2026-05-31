@@ -13,15 +13,9 @@
                 },
                 {
                     "id": "golden-ratio",
-                    "label": "Golden Ratio",
+                    "label": "Φ Studio",
                     "type": "link",
-                    "url": "./golden-ratio.html"
-                },
-                {
-                    "id": "fibonacci",
-                    "label": "Fibonacci",
-                    "type": "link",
-                    "url": "./fibonacci.html"
+                    "url": "./goldenratiostudio.html"
                 }
             ]
         },
@@ -58,16 +52,10 @@
                     "url": "./scale-calculator.html"
                 },
                 {
-                    "id": "resource-2",
-                    "label": "2",
+                    "id": "timber-frame-bent-designer",
+                    "label": "Timber Frame Bent Designer",
                     "type": "link",
-                    "url": "#"
-                },
-                {
-                    "id": "resource-3",
-                    "label": "3",
-                    "type": "link",
-                    "url": "#"
+                    "url": "./timber-frame-bent-designer.html"
                 }
             ]
         },
