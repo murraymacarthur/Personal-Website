@@ -1,5 +1,5 @@
 ---
-title: Infinet Golf
+title: Infinet
 models:
   - url: "/assets/golf/cad/3-Way 20º Connector.stl"
     label: 3-Way 20º Connector
@@ -17,9 +17,3 @@ gallery:
   - url: /assets/golf/v2 first build.jpg
     label: V2 First Build
 ---
-
-### CAD & Engineering
-Check out the latest 3D iterations for the project.
-
-### Image Gallery
-Visual journey of the Infinet Golf development.

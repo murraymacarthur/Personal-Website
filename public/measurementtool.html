@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Measure Tool</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0f0f0f;
+    --surface: #1a1a1a;
+    --surface2: #222;
+    --border: #2e2e2e;
+    --border-bright: #444;
+    --accent: #e8ff5a;
+    --accent-rgb: 232,255,90;
+    --accent-dim: rgba(232,255,90,0.12);
+    --text: #e8e8e8;
+    --text-dim: #777;
+    --text-dimmer: #444;
+    --red: #ff5a5a;
+    --yellow: #ffd166;
+    --mono: 'DM Mono', monospace;
+    --sans: 'DM Sans', sans-serif;
+    --sidebar: 260px;
+    --topbar: 52px;
+  }
+
+  html, body { height: 100%; overflow: hidden; background: var(--bg); color: var(--text); font-family: var(--sans); }
+
+  #app { display: flex; flex-direction: column; height: 100vh; }
+
+  #topbar {
+    height: var(--topbar);
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 10px;
+    flex-shrink: 0;
+    z-index: 10;
+  }
+
+  #main { display: flex; flex: 1; overflow: hidden; min-height: 0; }
+
+  /* ── SIDEBAR ── */
+  #sidebar {
+    width: var(--sidebar);
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    overflow: hidden;
+    min-height: 0;
+  }
+
+  #sidebar-fixed { flex-shrink: 0; }
+
+  #sidebar-measurements {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    padding: 18px 16px 14px;
+  }
+
+  #measurements-scroll {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    min-height: 0;
+    margin-top: 4px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-bright) transparent;
+  }
+  #measurements-scroll::-webkit-scrollbar { width: 4px; }
+  #measurements-scroll::-webkit-scrollbar-track { background: transparent; }
+  #measurements-scroll::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 2px; }
+
+  #measurements-list { display: flex; flex-direction: column; gap: 6px; padding-right: 2px; }
+
+  /* ── CANVAS ── */
+  #canvas-wrap { flex: 1; position: relative; overflow: hidden; background: #111; }
+  canvas { display: block; cursor: default; }
+  canvas.cur-pan   { cursor: grab; }
+  canvas.cur-pan.dragging { cursor: grabbing; }
+  canvas.cur-measure { cursor: none; }
+
+  /* ── TOPBAR ELEMENTS ── */
+  #app-title {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-right: 8px;
+    flex-shrink: 0;
+  }
+
+  .divider { width: 1px; height: 24px; background: var(--border); margin: 0 6px; flex-shrink: 0; }
+  .spacer { flex: 1; }
+
+  .upload-btn {
+    display: flex; align-items: center; gap: 6px;
+    background: var(--surface2); border: 1px solid var(--border-bright);
+    color: var(--text); font-family: var(--sans); font-size: 12px;
+    padding: 6px 12px; border-radius: 6px; cursor: pointer;
+    transition: border-color 0.15s, background 0.15s; white-space: nowrap; flex-shrink: 0;
+  }
+  .upload-btn:hover { border-color: var(--accent); background: var(--accent-dim); }
+  .upload-btn input { display: none; }
+
+  .tool-btn {
+    display: flex; align-items: center; gap: 6px;
+    background: transparent; border: 1px solid var(--border);
+    color: var(--text-dim); font-family: var(--sans); font-size: 12px;
+    padding: 6px 14px; border-radius: 6px; cursor: pointer;
+    transition: all 0.15s; white-space: nowrap; flex-shrink: 0;
+  }
+  .tool-btn:hover { border-color: var(--border-bright); color: var(--text); }
+  .tool-btn.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+  .tool-btn.icon-only { padding: 6px 9px; }
+
+  #status-pill {
+    font-family: var(--mono); font-size: 11px; color: var(--text-dimmer);
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 20px; padding: 4px 12px; letter-spacing: 0.05em;
+    transition: all 0.2s; min-width: 160px; text-align: center; flex-shrink: 0;
+  }
+  #status-pill.active { color: var(--accent); border-color: var(--accent); background: var(--accent-dim); }
+  #status-pill.result { color: var(--yellow); border-color: var(--yellow); background: rgba(255,209,102,0.1); }
+
+  /* ── THEME PICKER ── */
+  #theme-picker { display: flex; align-items: center; gap: 7px; flex-shrink: 0; }
+  #theme-picker > span {
+    font-family: var(--mono); font-size: 10px; color: var(--text-dimmer);
+    letter-spacing: 0.1em; text-transform: uppercase;
+  }
+  .theme-swatch {
+    width: 17px; height: 17px; border-radius: 50%;
+    border: 2px solid transparent; cursor: pointer;
+    transition: transform 0.15s, border-color 0.15s; flex-shrink: 0;
+  }
+  .theme-swatch:hover { transform: scale(1.2); }
+  .theme-swatch.sel { border-color: #e8e8e8; transform: scale(1.15); }
+
+  /* ── SIDEBAR INTERNALS ── */
+  .sidebar-section { padding: 18px 16px 14px; border-bottom: 1px solid var(--border); }
+  .sidebar-label {
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--text-dimmer); margin-bottom: 12px;
+  }
+
+  .info-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 12px; }
+  .info-row .key { color: var(--text-dim); }
+  .info-row .val { font-family: var(--mono); font-size: 11px; color: var(--text); }
+  .info-row .val.hi { color: var(--accent); }
+
+  .input-group { margin-bottom: 12px; }
+  .input-group label { display: block; font-size: 11px; color: var(--text-dim); margin-bottom: 5px; }
+  .input-group input[type="number"] {
+    width: 100%; background: var(--bg); border: 1px solid var(--border-bright);
+    border-radius: 6px; color: var(--text); font-family: var(--mono); font-size: 13px;
+    padding: 7px 10px; outline: none; transition: border-color 0.15s; -moz-appearance: textfield;
+  }
+  .input-group input[type="number"]::-webkit-outer-spin-button,
+  .input-group input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+  .input-group input[type="number"]:focus { border-color: var(--accent); }
+  .input-group .unit-tag { display: inline-block; font-family: var(--mono); font-size: 10px; color: var(--text-dimmer); margin-top: 4px; }
+
+  #converter-result {
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 6px; padding: 10px 12px; margin-top: 4px;
+  }
+  #converter-result .cr-label { font-size: 10px; color: var(--text-dimmer); margin-bottom: 4px; font-family: var(--mono); letter-spacing: 0.08em; }
+  #converter-result .cr-value { font-family: var(--mono); font-size: 18px; color: var(--accent); letter-spacing: 0.02em; }
+  #converter-result .cr-unit { font-size: 11px; color: var(--text-dim); margin-left: 4px; }
+
+  .meas-item {
+    background: var(--bg); border: 1px solid var(--border); border-radius: 6px;
+    padding: 8px 10px; display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--mono); font-size: 12px; animation: fadein 0.2s ease;
+  }
+  @keyframes fadein { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; } }
+  .meas-item .mval { color: var(--yellow); }
+  .meas-item .del-btn {
+    background: none; border: none; color: var(--text-dimmer);
+    cursor: pointer; font-size: 14px; padding: 0 2px; line-height: 1; transition: color 0.15s;
+  }
+  .meas-item .del-btn:hover { color: var(--red); }
+
+  #no-measurements { font-size: 11px; color: var(--text-dimmer); text-align: center; padding: 12px 0; font-family: var(--mono); }
+
+  .clear-btn {
+    width: 100%; margin-top: 10px; background: transparent; border: 1px solid var(--border);
+    border-radius: 6px; color: var(--text-dimmer); font-size: 11px; font-family: var(--sans);
+    padding: 6px; cursor: pointer; transition: all 0.15s; flex-shrink: 0;
+  }
+  .clear-btn:hover { border-color: var(--red); color: var(--red); }
+
+  #zoom-badge {
+    position: absolute; bottom: 14px; right: 14px;
+    background: rgba(0,0,0,0.6); border: 1px solid var(--border); border-radius: 20px;
+    padding: 4px 12px; font-family: var(--mono); font-size: 11px; color: var(--text-dim);
+    pointer-events: none; backdrop-filter: blur(4px);
+  }
+
+  #pan-hint {
+    position: absolute; bottom: 14px; left: 14px;
+    background: rgba(0,0,0,0.5); border: 1px solid var(--border); border-radius: 20px;
+    padding: 4px 12px; font-family: var(--mono); font-size: 10px; color: var(--text-dimmer);
+    pointer-events: none; backdrop-filter: blur(4px); opacity: 0; transition: opacity 0.25s;
+  }
+  #pan-hint.show { opacity: 1; }
+
+  svg.icon { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+  #empty-state {
+    position: absolute; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; pointer-events: none;
+    opacity: 1; transition: opacity 0.3s;
+  }
+  #empty-state.hidden { opacity: 0; }
+  #empty-state .es-icon { font-size: 48px; margin-bottom: 14px; opacity: 0.3; }
+  #empty-state p { font-size: 13px; color: var(--text-dimmer); font-family: var(--mono); letter-spacing: 0.08em; }
+  #empty-state small { font-size: 10px; color: var(--text-dimmer); font-family: var(--mono); margin-top: 6px; opacity: 0.5; }
+
+  #loading-overlay {
+    display: none; position: absolute; inset: 0; background: rgba(0,0,0,0.75);
+    align-items: center; justify-content: center; flex-direction: column; gap: 12px; z-index: 20;
+  }
+  #loading-overlay.show { display: flex; }
+  #loading-overlay p { font-family: var(--mono); font-size: 12px; color: var(--text-dim); }
+  .spinner {
+    width: 28px; height: 28px; border: 2px solid var(--border-bright);
+    border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <div id="topbar">
+    <span id="app-title">Measure</span>
+    <div class="divider"></div>
+
+    <label class="upload-btn">
+      <svg class="icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      Load Image
+      <input type="file" id="upload" accept="image/*,.heic,.heif">
+    </label>
+
+    <div class="divider"></div>
+
+    <button class="tool-btn" id="setScale">
+      <svg class="icon" viewBox="0 0 24 24"><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="8" x2="4" y2="16"/><line x1="20" y1="8" x2="20" y2="16"/></svg>
+      Set Scale
+    </button>
+
+    <button class="tool-btn" id="measureBtn">
+      <svg class="icon" viewBox="0 0 24 24"><path d="M2 12h20M2 12l4-4M2 12l4 4M22 12l-4-4M22 12l-4 4"/></svg>
+      Measure
+    </button>
+
+    <div class="divider"></div>
+
+    <button class="tool-btn icon-only" id="rotateCCW" title="Rotate 90° counter-clockwise">
+      <svg class="icon" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.95"/></svg>
+    </button>
+    <button class="tool-btn icon-only" id="rotateCW" title="Rotate 90° clockwise">
+      <svg class="icon" viewBox="0 0 24 24" style="transform:scaleX(-1)"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.95"/></svg>
+    </button>
+
+    <span id="status-pill">Ready</span>
+    <div class="spacer"></div>
+
+    <div id="theme-picker">
+      <span>Theme</span>
+    </div>
+  </div>
+
+  <div id="main">
+    <div id="sidebar">
+      <div id="sidebar-fixed">
+        <div class="sidebar-section">
+          <div class="sidebar-label">Scale</div>
+          <div class="info-row">
+            <span class="key">Status</span>
+            <span class="val" id="scale-status">Not set</span>
+          </div>
+          <div class="info-row">
+            <span class="key">mm / px</span>
+            <span class="val hi" id="scale-value">—</span>
+          </div>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-label">Scale Converter</div>
+          <div class="input-group">
+            <label>Scale factor (e.g. 1:50 → enter 50)</label>
+            <input type="number" id="conv-scale" min="0.001" step="any" placeholder="50">
+            <span class="unit-tag">drawing : real world</span>
+          </div>
+          <div class="input-group">
+            <label>Measurement on drawing</label>
+            <input type="number" id="conv-cm" min="0" step="any" placeholder="0.0">
+            <span class="unit-tag">cm (on paper/screen ruler)</span>
+          </div>
+          <div id="converter-result">
+            <div class="cr-label">REAL WORLD DISTANCE</div>
+            <div>
+              <span class="cr-value" id="conv-result">—</span>
+              <span class="cr-unit">mm</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="sidebar-measurements">
+        <div class="sidebar-label">Measurements</div>
+        <div id="measurements-scroll">
+          <div id="measurements-list">
+            <div id="no-measurements">No measurements yet</div>
+          </div>
+        </div>
+        <button class="clear-btn" id="clearAll">Clear all</button>
+      </div>
+    </div>
+
+    <div id="canvas-wrap">
+      <canvas id="canvas"></canvas>
+      <div id="loading-overlay">
+        <div class="spinner"></div>
+        <p>Decoding HEIC image…</p>
+      </div>
+      <div id="empty-state">
+        <div class="es-icon">⊹</div>
+        <p>Load an image to begin</p>
+        <small>JPEG · PNG · WEBP · HEIC · TIFF · BMP · GIF</small>
+      </div>
+      <div id="zoom-badge">100%</div>
+      <div id="pan-hint">⌃ Ctrl + drag to pan</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Load heic2any dynamically ──
+(function(){
+  const s = document.createElement('script');
+  s.src = 'https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js';
+  document.head.appendChild(s);
+})();
+
+// ── Themes ──
+const THEMES = [
+  { name:'Lime',   hex:'#e8ff5a', rgb:'232,255,90'  },
+  { name:'Cyan',   hex:'#50dcff', rgb:'80,220,255'  },
+  { name:'Orange', hex:'#ffa03c', rgb:'255,160,60'  },
+  { name:'Rose',   hex:'#ff64a0', rgb:'255,100,160' },
+  { name:'Violet', hex:'#b478ff', rgb:'180,120,255' },
+  { name:'Mint',   hex:'#50ffb4', rgb:'80,255,180'  },
+];
+
+let currentTheme = 0;
+const picker = document.getElementById('theme-picker');
+THEMES.forEach((t, i) => {
+  const sw = document.createElement('div');
+  sw.className = 'theme-swatch' + (i === 0 ? ' sel' : '');
+  sw.style.background = t.hex;
+  sw.title = t.name;
+  sw.onclick = () => {
+    currentTheme = i;
+    const r = document.documentElement.style;
+    r.setProperty('--accent', t.hex);
+    r.setProperty('--accent-rgb', t.rgb);
+    r.setProperty('--accent-dim', `rgba(${t.rgb},0.12)`);
+    document.querySelectorAll('.theme-swatch').forEach((el,j) => el.classList.toggle('sel', j===i));
+    draw();
+  };
+  picker.appendChild(sw);
+});
+
+// ── App state ──
+const canvas   = document.getElementById('canvas');
+const ctx      = canvas.getContext('2d');
+const upload   = document.getElementById('upload');
+const statusPill   = document.getElementById('status-pill');
+const scaleStatus  = document.getElementById('scale-status');
+const scaleValue   = document.getElementById('scale-value');
+const zoomBadge    = document.getElementById('zoom-badge');
+const emptyState   = document.getElementById('empty-state');
+const panHint      = document.getElementById('pan-hint');
+const loadingOvl   = document.getElementById('loading-overlay');
+const convScale    = document.getElementById('conv-scale');
+const convCm       = document.getElementById('conv-cm');
+const convResult   = document.getElementById('conv-result');
+const measList     = document.getElementById('measurements-list');
+const noMeas       = document.getElementById('no-measurements');
+const measScroll   = document.getElementById('measurements-scroll');
+
+let img = new Image();
+let imgLoaded   = false;
+let rotation    = 0;   // degrees: 0 | 90 | 180 | 270
+let scaleFactor = null;
+let mode        = null;
+let points      = [];
+let zoom        = 1;
+let offsetX     = 0, offsetY = 0;
+let isDragging  = false;
+let dragStart   = { x:0, y:0 };
+let measureCount = 0;
+let measurements = [];
+let mouse       = { x:-200, y:-200 };
+let ctrlHeld    = false;
+
+function resizeCanvas() {
+  const w = document.getElementById('canvas-wrap');
+  canvas.width  = w.clientWidth;
+  canvas.height = w.clientHeight;
+  draw();
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+function getAccent() {
+  return getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+}
+
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  if (!imgLoaded) return;
+  const accent = getAccent();
+
+  ctx.save();
+  ctx.translate(offsetX, offsetY);
+  ctx.scale(zoom, zoom);
+
+  // Draw image with rotation applied around its centre
+  const iw = rotation % 180 === 0 ? img.width  : img.height;
+  const ih = rotation % 180 === 0 ? img.height : img.width;
+  ctx.save();
+  ctx.translate(iw/2, ih/2);
+  ctx.rotate(rotation * Math.PI / 180);
+  ctx.drawImage(img, -img.width/2, -img.height/2);
+  ctx.restore();
+
+  // Saved measurements (amber)
+  measurements.forEach(m => {
+    if (!m.p1 || !m.p2) return;
+    ctx.beginPath();
+    ctx.moveTo(m.p1.x, m.p1.y);
+    ctx.lineTo(m.p2.x, m.p2.y);
+    ctx.strokeStyle = 'rgba(255,209,102,0.55)';
+    ctx.lineWidth = 1/zoom;
+    ctx.setLineDash([4/zoom, 3/zoom]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    [m.p1, m.p2].forEach(p => {
+      ctx.beginPath(); ctx.arc(p.x, p.y, 3/zoom, 0, Math.PI*2);
+      ctx.fillStyle = 'rgba(255,209,102,0.7)'; ctx.fill();
+    });
+  });
+
+  // Active first point
+  points.forEach(p => {
+    ctx.beginPath(); ctx.arc(p.x, p.y, 4/zoom, 0, Math.PI*2);
+    ctx.fillStyle = accent; ctx.fill();
+    ctx.beginPath(); ctx.arc(p.x, p.y, 7/zoom, 0, Math.PI*2);
+    ctx.strokeStyle = accent + '55'; ctx.lineWidth = 1.2/zoom; ctx.stroke();
+  });
+
+  // Preview line from first point to cursor
+  if (points.length === 1 && (mode === 'scale' || mode === 'measure')) {
+    const ix = (mouse.x - offsetX) / zoom;
+    const iy = (mouse.y - offsetY) / zoom;
+    ctx.beginPath(); ctx.moveTo(points[0].x, points[0].y); ctx.lineTo(ix, iy);
+    ctx.strokeStyle = accent + '77'; ctx.lineWidth = 1/zoom;
+    ctx.setLineDash([5/zoom, 4/zoom]); ctx.stroke(); ctx.setLineDash([]);
+  }
+
+  if (points.length === 2) {
+    ctx.beginPath(); ctx.moveTo(points[0].x, points[0].y); ctx.lineTo(points[1].x, points[1].y);
+    ctx.strokeStyle = accent; ctx.lineWidth = 1.5/zoom;
+    ctx.setLineDash([6/zoom, 4/zoom]); ctx.stroke(); ctx.setLineDash([]);
+  }
+
+  ctx.restore();
+
+  // Custom crosshair — drawn in screen space
+  if ((mode === 'scale' || mode === 'measure') && !ctrlHeld && mouse.x > 0) {
+    const cx = mouse.x, cy = mouse.y;
+    const len = 20, gap = 5;
+    ctx.save();
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 1;
+    ctx.shadowColor = 'rgba(0,0,0,0.9)';
+    ctx.shadowBlur = 4;
+    ctx.beginPath(); ctx.moveTo(cx-len, cy); ctx.lineTo(cx-gap, cy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx+gap, cy); ctx.lineTo(cx+len, cy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx, cy-len); ctx.lineTo(cx, cy-gap); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx, cy+gap); ctx.lineTo(cx, cy+len); ctx.stroke();
+    ctx.shadowBlur = 0;
+    ctx.beginPath(); ctx.arc(cx, cy, 1.2, 0, Math.PI*2);
+    ctx.fillStyle = accent; ctx.fill();
+    ctx.restore();
+  }
+}
+
+// ── Image loading ──
+upload.onchange = async e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  e.target.value = ''; // allow re-selecting same file
+
+  const isHEIC = /heic|heif/i.test(file.type) || /\.(heic|heif)$/i.test(file.name);
+
+  if (isHEIC) {
+    loadingOvl.classList.add('show');
+    try {
+      // Wait for heic2any to be available (loaded async)
+      let tries = 0;
+      while (!window.heic2any && tries++ < 20) {
+        await new Promise(r => setTimeout(r, 250));
+      }
+      if (!window.heic2any) throw new Error('heic2any library failed to load. Check your internet connection.');
+      const blob = await window.heic2any({ blob: file, toType: 'image/jpeg', quality: 0.95 });
+      loadImageSrc(URL.createObjectURL(Array.isArray(blob) ? blob[0] : blob));
+    } catch(err) {
+      loadingOvl.classList.remove('show');
+      alert('Could not decode HEIC.\n\n' + err.message + '\n\nTip: HEIC decoding requires the heic2any library loaded from the internet on first use.');
+    }
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = evt => loadImageSrc(evt.target.result);
+  reader.readAsDataURL(file);
+};
+
+function loadImageSrc(src) {
+  img.onload = () => {
+    imgLoaded = true;
+    rotation  = 0;
+    loadingOvl.classList.remove('show');
+    fitImage();
+    emptyState.classList.add('hidden');
+    draw();
+    updateZoom();
+  };
+  img.src = src;
+}
+
+function fitImage() {
+  const iw = rotation % 180 === 0 ? img.width  : img.height;
+  const ih = rotation % 180 === 0 ? img.height : img.width;
+  const sx = canvas.width  / iw;
+  const sy = canvas.height / ih;
+  zoom    = Math.min(sx, sy, 1) * 0.92;
+  offsetX = (canvas.width  - iw * zoom) / 2;
+  offsetY = (canvas.height - ih * zoom) / 2;
+}
+
+// ── Mouse ──
+canvas.addEventListener('mousemove', e => {
+  const r = canvas.getBoundingClientRect();
+  mouse.x = e.clientX - r.left;
+  mouse.y = e.clientY - r.top;
+  if (isDragging) {
+    offsetX = e.clientX - dragStart.x;
+    offsetY = e.clientY - dragStart.y;
+  }
+  draw();
+});
+
+canvas.addEventListener('mouseleave', () => {
+  mouse.x = -200; mouse.y = -200;
+  isDragging = false;
+  canvas.classList.remove('dragging');
+  draw();
+});
+
+canvas.addEventListener('mousedown', e => {
+  const inMode = mode === 'scale' || mode === 'measure';
+
+  // Ctrl held OR not in a measure mode → pan
+  if (ctrlHeld || !inMode) {
+    if (!imgLoaded) return;
+    isDragging = true;
+    canvas.classList.add('dragging');
+    dragStart.x = e.clientX - offsetX;
+    dragStart.y = e.clientY - offsetY;
+    return;
+  }
+
+  // Measure click
+  const r = canvas.getBoundingClientRect();
+  // Raw image-space coords (accounting for rotation offset in draw)
+  const iw = rotation % 180 === 0 ? img.width  : img.height;
+  const ih = rotation % 180 === 0 ? img.height : img.width;
+  const x = (e.clientX - r.left - offsetX) / zoom;
+  const y = (e.clientY - r.top  - offsetY) / zoom;
+  points.push({ x, y });
+
+  if (points.length === 2) {
+    const dx = points[1].x - points[0].x;
+    const dy = points[1].y - points[0].y;
+    const px = Math.sqrt(dx*dx + dy*dy);
+
+    if (mode === 'scale') {
+      const val = prompt('Enter the real distance between these two points (in mm):');
+      if (val === null || isNaN(parseFloat(val))) {
+        points = []; draw(); setStatus('Scale cancelled.', ''); return;
+      }
+      scaleFactor = parseFloat(val) / px;
+      scaleStatus.textContent = 'Set ✓';
+      scaleStatus.style.color = 'var(--accent)';
+      scaleValue.textContent  = scaleFactor.toFixed(4);
+      setStatus(`Scale: 1 px = ${scaleFactor.toFixed(3)} mm`, 'active');
+      mode = null; setToolActive(null); points = [];
+      updateCursor();
+    } else {
+      if (!scaleFactor) { alert('Set scale first.'); points = []; draw(); return; }
+      const mm = px * scaleFactor;
+      measureCount++;
+      const m = { id: measureCount, value: mm, p1:{...points[0]}, p2:{...points[1]} };
+      measurements.push(m);
+      addMeasItem(m);
+      setStatus(`${mm.toFixed(1)} mm  ·  click next`, 'result');
+      points = [];
+    }
+  } else {
+    setStatus('Click second point…', 'active');
+  }
+  draw();
+});
+
+canvas.addEventListener('mouseup', () => {
+  isDragging = false;
+  canvas.classList.remove('dragging');
+});
+
+canvas.addEventListener('wheel', e => {
+  e.preventDefault();
+  const r = canvas.getBoundingClientRect();
+  const mx = e.clientX - r.left, my = e.clientY - r.top;
+  const prev = zoom;
+  zoom = Math.min(Math.max(zoom * (1 - e.deltaY * 0.001), 0.05), 20);
+  offsetX = mx - (mx - offsetX) * (zoom / prev);
+  offsetY = my - (my - offsetY) * (zoom / prev);
+  draw(); updateZoom();
+}, { passive: false });
+
+// ── Keyboard ──
+document.addEventListener('keydown', e => {
+  if (e.key === 'Control') { ctrlHeld = true; updateCursor(); panHint.classList.add('show'); }
+  if (e.key === 'Escape') {
+    mode = null; points = []; setToolActive(null); setStatus('Ready',''); updateCursor(); draw();
+  }
+});
+document.addEventListener('keyup', e => {
+  if (e.key === 'Control') {
+    ctrlHeld = false; updateCursor(); panHint.classList.remove('show');
+    isDragging = false; canvas.classList.remove('dragging');
+  }
+});
+
+// ── Cursor ──
+function updateCursor() {
+  canvas.className = '';
+  if (ctrlHeld) canvas.classList.add('cur-pan');
+  else if (mode === 'scale' || mode === 'measure') canvas.classList.add('cur-measure');
+}
+
+// ── Buttons ──
+document.getElementById('setScale').onclick = () => {
+  mode = 'scale'; points = []; setToolActive('scale');
+  setStatus('Click two points of known distance', 'active');
+  updateCursor(); draw();
+};
+document.getElementById('measureBtn').onclick = () => {
+  if (!scaleFactor) { alert('Set scale first.'); return; }
+  mode = 'measure'; points = []; setToolActive('measure');
+  setStatus('Click two points to measure', 'active');
+  updateCursor(); draw();
+};
+function rotate(dir) {
+  if (!imgLoaded) return;
+  rotation = (rotation + (dir === 'cw' ? 90 : -90) + 360) % 360;
+  // Clear measurement points since they no longer correspond to rotated coords
+  points = [];
+  fitImage();
+  draw();
+  updateZoom();
+}
+document.getElementById('rotateCW').onclick  = () => rotate('cw');
+document.getElementById('rotateCCW').onclick = () => rotate('ccw');
+
+document.getElementById('clearAll').onclick = () => {
+  measurements = []; measList.innerHTML = ''; measList.appendChild(noMeas);
+  noMeas.style.display = ''; draw(); setStatus('Ready','');
+};
+
+// ── Helpers ──
+function setStatus(msg, cls) {
+  statusPill.textContent = msg;
+  statusPill.className = cls || '';
+}
+function setToolActive(w) {
+  document.getElementById('setScale').classList.toggle('active', w==='scale');
+  document.getElementById('measureBtn').classList.toggle('active', w==='measure');
+}
+function updateZoom() { zoomBadge.textContent = Math.round(zoom*100) + '%'; }
+
+function addMeasItem(m) {
+  noMeas.style.display = 'none';
+  const el = document.createElement('div');
+  el.className = 'meas-item';
+  el.innerHTML = `
+    <span style="color:var(--text-dimmer);font-size:10px;">#${m.id}</span>
+    <span class="mval">${m.value.toFixed(1)}<span style="color:var(--text-dimmer);font-size:10px;"> mm</span></span>
+    <button class="del-btn" title="Remove">×</button>
+  `;
+  el.querySelector('.del-btn').onclick = () => {
+    measurements = measurements.filter(x => x.id !== m.id);
+    el.remove();
+    if (!measurements.length) noMeas.style.display = '';
+    draw();
+  };
+  measList.appendChild(el);
+  measScroll.scrollTop = measScroll.scrollHeight;
+}
+
+// ── Scale converter ──
+function updateConverter() {
+  const s = parseFloat(convScale.value), c = parseFloat(convCm.value);
+  if (!isNaN(s) && !isNaN(c) && s > 0 && c >= 0) {
+    const mm = c * s * 10;
+    convResult.textContent = mm % 1 === 0 ? mm.toFixed(0) : mm.toFixed(1);
+  } else { convResult.textContent = '—'; }
+}
+convScale.addEventListener('input', updateConverter);
+convCm.addEventListener('input', updateConverter);
+</script>
+</body>
+</html>

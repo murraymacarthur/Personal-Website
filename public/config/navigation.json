@@ -10,6 +10,18 @@
                     "label": "π Pendulum",
                     "type": "link",
                     "url": "./pendulum.html"
+                },
+                {
+                    "id": "golden-ratio",
+                    "label": "Golden Ratio",
+                    "type": "link",
+                    "url": "./golden-ratio.html"
+                },
+                {
+                    "id": "fibonacci",
+                    "label": "Fibonacci",
+                    "type": "link",
+                    "url": "./fibonacci.html"
                 }
             ]
         },
@@ -25,14 +37,19 @@
                     "url": "https://www.youtube.com/@murraymacarthur"
                 },
                 {
-                    "id": "rd1",
+                    "id": "rd-divider",
                     "type": "divider"
                 },
                 {
-                    "id": "gym-app",
-                    "label": "Gym app",
+                    "id": "h-tools",
+                    "label": "Tools",
+                    "type": "header"
+                },
+                {
+                    "id": "measurement-tool",
+                    "label": "Measuring Tool",
                     "type": "link",
-                    "url": "https://gym-app-iota-henna.vercel.app/"
+                    "url": "./measurementtool.html"
                 },
                 {
                     "id": "resource-2",
@@ -58,15 +75,15 @@
             "id": "about",
             "label": "About",
             "type": "menu",
+            "content": "/content/about.md",
             "children": [
                 {
-                    "id": "about-me",
-                    "label": "Who I Am",
-                    "type": "page",
-                    "content": "/content/about.md"
+                    "id": "h-work",
+                    "label": "Work",
+                    "type": "header"
                 },
                 {
-                    "id": "ad1",
+                    "id": "ad-divider",
                     "type": "divider"
                 },
                 {
@@ -76,32 +93,13 @@
                 },
                 {
                     "id": "nadar",
-                    "label": "Nadar 🌿",
-                    "type": "menu",
-                    "children": [
-                        {
-                            "id": "cad",
-                            "label": "CAD",
-                            "type": "page",
-                            "content": "/content/cad.md"
-                        },
-                        {
-                            "id": "oak-estimator",
-                            "label": "Oak Frame Project Estimator",
-                            "type": "link",
-                            "url": "https://oak-frame-project-estimator.vercel.app/"
-                        },
-                        {
-                            "id": "property-transformer",
-                            "label": "Property view transformer",
-                            "type": "link",
-                            "url": "https://property-view-transformer.vercel.app/"
-                        }
-                    ]
+                    "label": "nàdar 🌿",
+                    "type": "link",
+                    "url": "https://www.nadaroak.co.uk/"
                 },
                 {
                     "id": "infinet",
-                    "label": "Infinet 🏌️",
+                    "label": "Developing the Infinet 🏌️",
                     "type": "page",
                     "content": "/content/golf.md"
                 },

@@ -77,13 +77,24 @@ function handleNavItem(item) {
 }
 
 /**
- * Show a menu overlay with list of children
+ * Show a menu overlay with list of children (supports intro markdown content)
  */
-function showMenu(item) {
+async function showMenu(item) {
     updateBreadcrumb();
     updateBackButton();
 
-    let html = '<ul class="menu-list">';
+    let introHtml = '';
+    if (item.content) {
+        try {
+            const { renderContent } = await import('./content.js');
+            const introContent = await renderContent(item.content);
+            introHtml = `<div class="menu-intro-content">${introContent}</div>`;
+        } catch (err) {
+            console.error('Failed to load menu intro content:', err);
+        }
+    }
+
+    let html = introHtml + '<ul class="menu-list">';
 
     if (item.children && item.children.length > 0) {
         item.children.forEach((child) => {

@@ -649,3 +649,27 @@ a:hover {
 .overlay-content::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.2);
 }
+
+/* ============================================
+   Menu Intro Content
+   ============================================ */
+.menu-intro-content {
+  margin-bottom: var(--space-lg);
+  padding: 0 var(--space-sm);
+}
+
+.menu-intro-content p {
+  color: var(--color-text-muted);
+  line-height: 1.7;
+  font-size: var(--font-size-base);
+  margin-bottom: var(--space-md);
+}
+
+.menu-intro-content h1,
+.menu-intro-content h2,
+.menu-intro-content h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: var(--space-md);
+}
