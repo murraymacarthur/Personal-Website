@@ -1,10 +1,74 @@
 {
     "navigation": [
         {
-            "id": "work",
-            "label": "Work",
+            "id": "play",
+            "label": "PLAY",
             "type": "menu",
             "children": [
+                {
+                    "id": "pendulum",
+                    "label": "π Pendulum",
+                    "type": "link",
+                    "url": "./pendulum.html"
+                }
+            ]
+        },
+        {
+            "id": "resources",
+            "label": "Resources",
+            "type": "menu",
+            "children": [
+                {
+                    "id": "youtube",
+                    "label": "YouTube",
+                    "type": "link",
+                    "url": "https://www.youtube.com/@murraymacarthur"
+                },
+                {
+                    "id": "rd1",
+                    "type": "divider"
+                },
+                {
+                    "id": "gym-app",
+                    "label": "Gym app",
+                    "type": "link",
+                    "url": "https://gym-app-iota-henna.vercel.app/"
+                },
+                {
+                    "id": "resource-2",
+                    "label": "2",
+                    "type": "link",
+                    "url": "#"
+                },
+                {
+                    "id": "resource-3",
+                    "label": "3",
+                    "type": "link",
+                    "url": "#"
+                }
+            ]
+        },
+        {
+            "id": "contact",
+            "label": "Contact",
+            "type": "page",
+            "content": "/content/contact.md"
+        },
+        {
+            "id": "about",
+            "label": "About",
+            "type": "menu",
+            "children": [
+                {
+                    "id": "about-me",
+                    "label": "Who I Am",
+                    "type": "page",
+                    "content": "/content/about.md"
+                },
+                {
+                    "id": "ad1",
+                    "type": "divider"
+                },
                 {
                     "id": "h1",
                     "label": "Currently",
@@ -54,7 +118,7 @@
                     "id": "student-deals-club",
                     "label": "Student Deals Club",
                     "type": "link",
-                    "url": "https://www.instagram.com/studentdealsclub"
+                    "url": "https://www.instagram.com/student_deals_club/"
                 },
                 {
                     "id": "jlr-article",
@@ -63,53 +127,6 @@
                     "url": "https://www.telegraph.co.uk/business/2026/01/25/jlr-revives-petrol-engine-after-disastrous-woke-rebrand/"
                 }
             ]
-        },
-        {
-            "id": "resources",
-            "label": "Resources",
-            "type": "menu",
-            "children": [
-                {
-                    "id": "youtube",
-                    "label": "YouTube",
-                    "type": "link",
-                    "url": "https://www.youtube.com/@murraymacarthur"
-                },
-                {
-                    "id": "rd1",
-                    "type": "divider"
-                },
-                {
-                    "id": "gym-app",
-                    "label": "Gym app",
-                    "type": "link",
-                    "url": "https://gym-app-iota-henna.vercel.app/"
-                },
-                {
-                    "id": "resource-2",
-                    "label": "2",
-                    "type": "link",
-                    "url": "#"
-                },
-                {
-                    "id": "resource-3",
-                    "label": "3",
-                    "type": "link",
-                    "url": "#"
-                }
-            ]
-        },
-        {
-            "id": "contact",
-            "label": "Contact",
-            "type": "page",
-            "content": "/content/contact.md"
-        },
-        {
-            "id": "about",
-            "label": "About",
-            "type": "page",
-            "content": "/content/about.md"
         }
     ]
 }
